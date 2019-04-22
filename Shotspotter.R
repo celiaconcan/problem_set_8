@@ -1,44 +1,47 @@
+library(readr)
+library(ggplot2)
+library(geom_sf)
 library(tigris)
+library(viridis)
 library(sf)
+library(stringr)
 library(ggthemes)
 library(gganimate)
 library(tidyverse)
-library(janitor)
-
+##
 
 oakland <- read_csv("http://justicetechlab.org/wp-content/uploads/2017/08/OakShots_latlong.csv",
-              col_types = cols(
-                OBJECTID = col_double(),
-                CAD_ = col_character(),
-                BEAT = col_character(),
-                DATE___TIM = col_character(),
-                ADDRESS = col_character(),
-                CALL_ID = col_character(),
-                DESCRIPTIO = col_character(),
-                Xrough = col_double(),
-                Yrough = col_double(),
-                XCOORD = col_double(),
-                YCOORD = col_double()
-              )) 
+                    col_types = cols(
+                      OBJECTID = col_double(),
+                      CAD_ = col_character(),
+                      BEAT = col_character(),
+                      DATE___TIM = col_character(),
+                      ADDRESS = col_character(),
+                      CALL_ID = col_character(),
+                      DESCRIPTIO = col_character(),
+                      Xrough = col_double(),
+                      Yrough = col_double(),
+                      XCOORD = col_double(),
+                      YCOORD = col_double()
+                    )) %>%
+  arrange(DATE___TIM) %>%
+  rowid_to_column() %>%
+  sample_n(200)
+
+shapes <- urban_areas(class = "sf") 
 
 
+shapes2 <- shapes %>%
+filter(NAME10 == "San Francisco--Oakland, CA")
 
-shapes <- places("ca", class = "sf", cb = TRUE) %>%
-  filter(NAME == "Oakland")
+oakland <- st_as_sf(oakland, coords = c("XCOORD", "YCOORD"), crs = 4236)
 
-x <- oakland %>%
-  filter(XCOORD > -130,
-         YCOORD > 36) %>%
-  st_as_sf(coords = c("XCOORD", "YCOORD"), crs = st_crs(shapes))
-
-
-
-
-ggplot(data = shapes) + 
-  geom_sf() + 
-  geom_sf(data = x, alpha = 0.5) + 
+ggplot(data = shapes2)+ 
+  geom_sf() +
+  geom_sf(data = oakland) + 
   theme_map() +
-  transition_states(DATE__TIM) +
+  transition_time(rowid) +
   labs(title = "Location of ShotSpotter Detections",
-       subtitle = "Aurora, CO",
+       subtitle = "Oakland, CA",
        caption = "Source: Justice Tech Lab")
+
