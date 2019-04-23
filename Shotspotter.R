@@ -8,7 +8,7 @@ library(stringr)
 library(ggthemes)
 library(gganimate)
 library(tidyverse)
-##
+
 
 oakland <- read_csv("http://justicetechlab.org/wp-content/uploads/2017/08/OakShots_latlong.csv",
                     col_types = cols(
@@ -36,7 +36,7 @@ filter(NAME10 == "San Francisco--Oakland, CA")
 
 oakland <- st_as_sf(oakland, coords = c("XCOORD", "YCOORD"), crs = 4236)
 
-ggplot(data = shapes2)+ 
+p <- ggplot(data = shapes2)+ 
   geom_sf() +
   geom_sf(data = oakland) + 
   theme_map() +
@@ -45,3 +45,4 @@ ggplot(data = shapes2)+
        subtitle = "Oakland, CA",
        caption = "Source: Justice Tech Lab")
 
+anim_save("app_1/oakland_anim.gif", animation = p)
