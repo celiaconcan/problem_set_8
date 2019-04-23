@@ -10,7 +10,12 @@ ui <- fluidPage(
     # Sidebar panel for inputs ----
     sidebarPanel(
       
+      h3("Source"),
+      p("Thank you to Justice Tech Lab for gathering this data and making it available for public use."),     
       
+      
+      h3("Celia's Github"),
+      p("https://github.com/celiaconcan/problem_set_8.git")
       
     ),
     
